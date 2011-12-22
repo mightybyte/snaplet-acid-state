@@ -34,11 +34,11 @@ import           Snap
 ------------------------------------------------------------------------------
 -- | 
 description :: Text
-description = "Snaplet providing acid-state"
+description = "Snaplet providing acid-state functionality"
 
 
 ------------------------------------------------------------------------------
--- | 
+-- | Data type holding acid-state snaplet data.
 data Acid st = Acid
     { _acidStore :: A.AcidState st
     }
@@ -75,8 +75,9 @@ acidInit' location initial = makeSnaplet "acid-state" description Nothing $ do
 -- You can minimize boilerplate in your application by adding an instance like
 -- the following:
 --
--- data App = App { ... _acid :: Snaplet (Acid MyState) ... }
--- instance HasAcid App where getAcidStore = _acid
+-- > data App = App { ... _acid :: Snaplet (Acid MyState) ... }
+-- > instance HasAcid App MyState where
+-- >     getAcidStore = getL (snapletValue . acid)
 class HasAcid myState acidState where
     getAcidStore :: myState -> (Acid acidState)
 
