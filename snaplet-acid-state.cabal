@@ -1,0 +1,33 @@
+name:           snaplet-acid-state
+version:        0.1
+synopsis:       acid-state snaplet for Snap Framework
+description:    This snaplet that makes it easy to use acid-state in a Snap
+                application.
+license:        BSD3
+license-file:   LICENSE
+author:         Doug Beardsley
+maintainer:     mightybyte@gmail.com
+build-type:     Simple
+cabal-version:  >= 1.6
+category:       Web
+
+extra-source-files:  LICENSE
+
+source-repository head
+  type:     git
+  location: https://github.com/mightybyte/snaplet-acid-state.git
+
+Library
+  hs-source-dirs: src
+
+  exposed-modules:
+    Snap.Snaplet.AcidState
+
+  build-depends:
+    acid-state                >= 0.6     && < 0.7,
+    base                      >= 4       && < 5,
+    snap                      >= 0.6     && < 0.8,
+    text                      >= 0.11    && < 0.12
+
+  ghc-options: -Wall -fwarn-tabs -funbox-strict-fields
+               -fno-warn-orphans -fno-warn-unused-do-bind
