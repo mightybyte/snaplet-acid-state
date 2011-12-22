@@ -71,49 +71,57 @@ acidInit' location initial = makeSnaplet "acid-state" description Nothing $ do
 
 ------------------------------------------------------------------------------
 -- | Type class standardizing a context that holds an AcidState.
-class MonadIO m => HasAcid m st where
-    getAcidStore :: m (A.AcidState st)
+--
+-- You can minimize boilerplate in your application by adding an instance like
+-- the following:
+--
+-- data App = App { ... _acid :: Snaplet (Acid MyState) ... }
+-- instance HasAcid App where getAcidStore = _acid
+class HasAcid myState acidState where
+    getAcidStore :: myState -> (Acid acidState)
 
 
-instance HasAcid (Handler b (Acid st)) st where
-    getAcidStore = gets _acidStore
+instance HasAcid (Acid st) st where
+    getAcidStore = id
+
+
+getAcidState = _acidStore . getAcidStore
 
 
 ------------------------------------------------------------------------------
 -- | Wrapper for acid-state's update function that works for arbitrary
 -- instances of HasAcid.
---update :: (HasAcid m st, A.UpdateEvent event) => event -> m (A.EventResult event)
-update :: (A.UpdateEvent event, HasAcid m (A.MethodState event))
-       => event -> m (A.EventResult event)
+update :: (MonadState s m, HasAcid s (A.MethodState event),
+           UpdateEvent event, MonadIO m)
+       => event -> m (EventResult event)
 update event = do
-    st <- getAcidStore
+    st <- gets getAcidState
     liftIO $ A.update st event
 
 
 ------------------------------------------------------------------------------
 -- | Wrapper for acid-state's query function that works for arbitrary
 -- instances of HasAcid.
-query :: (A.QueryEvent event, HasAcid m (A.MethodState event))
-      => event -> m (A.EventResult event)
+query :: (HasAcid s (A.MethodState event),
+          MonadIO m, QueryEvent event, MonadState s m)
+      => event -> m (EventResult event)
 query event = do
-    st <- getAcidStore
+    st <- gets getAcidState
     liftIO $ A.query st event
 
 
 ------------------------------------------------------------------------------
 -- | Wrapper for acid-state's createCheckpoint function that works for
 -- arbitrary instances of HasAcid.
---createCheckpoint :: HasAcid m st => m ()
 createCheckpoint = do
-    st <- getAcidStore
+    st <- gets getAcidState
     liftIO $ A.createCheckpoint st
 
 
 ------------------------------------------------------------------------------
 -- | Wrapper for acid-state's closeAcidState function that works for
 -- arbitrary instances of HasAcid.
---closeAcidState :: HasAcid m st => m ()
 closeAcidState = do
-    st <- getAcidStore
+    st <- gets getAcidState
     liftIO $ A.closeAcidState st
 
