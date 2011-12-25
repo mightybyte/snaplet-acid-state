@@ -86,6 +86,7 @@ instance HasAcid (Acid st) st where
     getAcidStore = id
 
 
+getAcidState :: forall a st. HasAcid a st => a -> AcidState st
 getAcidState = _acidStore . getAcidStore
 
 
