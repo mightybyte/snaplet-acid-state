@@ -6,6 +6,7 @@
 {-# LANGUAGE NoMonomorphismRestriction #-}
 {-# LANGUAGE OverloadedStrings         #-}
 {-# LANGUAGE RankNTypes                #-}
+{-# LANGUAGE ScopedTypeVariables       #-}
 module Snap.Snaplet.AcidState
   ( Acid
   , HasAcid(..)
@@ -115,15 +116,21 @@ query event = do
 ------------------------------------------------------------------------------
 -- | Wrapper for acid-state's createCheckpoint function that works for
 -- arbitrary instances of HasAcid.
+createCheckpoint :: forall (m :: * -> *) s st.
+                    (HasAcid s st, MonadIO m, MonadState s m)
+                 => m ()
 createCheckpoint = do
-    st <- gets getAcidState
+    (st :: AcidState st) <- gets getAcidState
     liftIO $ A.createCheckpoint st
 
 
 ------------------------------------------------------------------------------
 -- | Wrapper for acid-state's closeAcidState function that works for
 -- arbitrary instances of HasAcid.
+closeAcidState :: forall (m :: * -> *) s st.
+                  (HasAcid s st, MonadIO m, MonadState s m)
+               => m ()
 closeAcidState = do
-    st <- gets getAcidState
+    (st :: AcidState st) <- gets getAcidState
     liftIO $ A.closeAcidState st
 
