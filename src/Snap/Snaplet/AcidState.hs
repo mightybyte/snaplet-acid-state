@@ -12,6 +12,7 @@ module Snap.Snaplet.AcidState
   , HasAcid(..)
   , acidInit
   , acidInit'
+  , getAcidState
   , update
   , query
   , createCheckpoint
@@ -20,6 +21,9 @@ module Snap.Snaplet.AcidState
   , module Data.Acid
   ) where
 
+
+import           Prelude hiding ((.), id)
+import           Control.Category
 import qualified Data.Acid as A
 import qualified Data.Acid.Advanced as A
 import           Data.Acid hiding (update
@@ -40,7 +44,7 @@ description = "Snaplet providing acid-state functionality"
 
 ------------------------------------------------------------------------------
 -- | Data type holding acid-state snaplet data.
-data Acid st = Acid
+newtype Acid st = Acid
     { _acidStore :: A.AcidState st
     }
 
@@ -87,18 +91,24 @@ instance HasAcid (Acid st) st where
     getAcidStore = id
 
 
-getAcidState :: forall a st. HasAcid a st => a -> AcidState st
-getAcidState = _acidStore . getAcidStore
+------------------------------------------------------------------------------
+-- | Lower-level function providing direct access to the AcidState data type.
+getAcidState :: (HasAcid s st, MonadSnaplet m, MonadState s (m v' v'))
+    => m v' v (AcidState st)
+getAcidState = withTop' id $ gets $ _acidStore . getAcidStore
 
 
 ------------------------------------------------------------------------------
 -- | Wrapper for acid-state's update function that works for arbitrary
 -- instances of HasAcid.
-update :: (MonadState s m, HasAcid s (A.MethodState event),
-           UpdateEvent event, MonadIO m)
-       => event -> m (EventResult event)
+update :: (HasAcid s (A.MethodState event),
+           MonadSnaplet m,
+           MonadState s (m v' v'),
+           UpdateEvent event,
+           MonadIO (m v' v))
+       => event -> m v' v (EventResult event)
 update event = do
-    st <- gets getAcidState
+    st <- getAcidState
     liftIO $ A.update st event
 
 
@@ -106,31 +116,28 @@ update event = do
 -- | Wrapper for acid-state's query function that works for arbitrary
 -- instances of HasAcid.
 query :: (HasAcid s (A.MethodState event),
-          MonadIO m, QueryEvent event, MonadState s m)
-      => event -> m (EventResult event)
+          MonadSnaplet m,
+          MonadState s (m v' v'),
+          QueryEvent event,
+          MonadIO (m v' v))
+      => event -> m v' v (EventResult event)
 query event = do
-    st <- gets getAcidState
+    st <- getAcidState
     liftIO $ A.query st event
 
 
 ------------------------------------------------------------------------------
 -- | Wrapper for acid-state's createCheckpoint function that works for
 -- arbitrary instances of HasAcid.
-createCheckpoint :: forall (m :: * -> *) s st.
-                    (HasAcid s st, MonadIO m, MonadState s m)
-                 => m ()
 createCheckpoint = do
-    (st :: AcidState st) <- gets getAcidState
+    st <- getAcidState
     liftIO $ A.createCheckpoint st
 
 
 ------------------------------------------------------------------------------
 -- | Wrapper for acid-state's closeAcidState function that works for
 -- arbitrary instances of HasAcid.
-closeAcidState :: forall (m :: * -> *) s st.
-                  (HasAcid s st, MonadIO m, MonadState s m)
-               => m ()
 closeAcidState = do
-    (st :: AcidState st) <- gets getAcidState
+    st <- getAcidState
     liftIO $ A.closeAcidState st
 
