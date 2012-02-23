@@ -94,8 +94,8 @@ instance HasAcid (Acid st) st where
 
 ------------------------------------------------------------------------------
 -- | Lower-level function providing direct access to the AcidState data type.
-getAcidState :: (HasAcid s st, MonadSnaplet m, MonadState s (m v' v'))
-    => m v' v (AcidState st)
+getAcidState :: (HasAcid s st, MonadSnaplet m, MonadState s (m b b))
+    => m b v (AcidState st)
 getAcidState = withTop' id $ gets $ _acidStore . getAcidStore
 
 
@@ -104,10 +104,10 @@ getAcidState = withTop' id $ gets $ _acidStore . getAcidStore
 -- instances of HasAcid.
 update :: (HasAcid s (A.MethodState event),
            MonadSnaplet m,
-           MonadState s (m v' v'),
+           MonadState s (m b b),
            UpdateEvent event,
-           MonadIO (m v' v))
-       => event -> m v' v (EventResult event)
+           MonadIO (m b v))
+       => event -> m b v (EventResult event)
 update event = do
     st <- getAcidState
     liftIO $ A.update st event
@@ -118,10 +118,10 @@ update event = do
 -- instances of HasAcid.
 query :: (HasAcid s (A.MethodState event),
           MonadSnaplet m,
-          MonadState s (m v' v'),
+          MonadState s (m b b),
           QueryEvent event,
-          MonadIO (m v' v))
-      => event -> m v' v (EventResult event)
+          MonadIO (m b v))
+      => event -> m b v (EventResult event)
 query event = do
     st <- getAcidState
     liftIO $ A.query st event
