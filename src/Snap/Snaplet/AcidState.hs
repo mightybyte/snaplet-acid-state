@@ -71,6 +71,7 @@ acidInit' :: A.IsAcidic st
           -> SnapletInit b (Acid st)
 acidInit' location initial = makeSnaplet "acid-state" description Nothing $ do
     st <- liftIO $ A.openLocalStateFrom location initial
+    onUnload (A.closeAcidState st)
     return $ Acid st
 
 
@@ -136,7 +137,9 @@ createCheckpoint = do
 
 ------------------------------------------------------------------------------
 -- | Wrapper for acid-state's closeAcidState function that works for
--- arbitrary instances of HasAcid.
+-- arbitrary instances of HasAcid.  The state is automatically closed by the
+-- snaplet's unload action, but this is here in case the user needs more
+-- control.
 closeAcidState = do
     st <- getAcidState
     liftIO $ A.closeAcidState st
