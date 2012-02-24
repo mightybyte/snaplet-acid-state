@@ -56,9 +56,8 @@ acidInit :: (A.IsAcidic st, Typeable st)
          => st
          -- ^ Initial state to be used if 
          -> SnapletInit b (Acid st)
-acidInit initial = makeSnaplet "acid-state" description Nothing $ do
-    st <- liftIO $ A.openLocalState initial
-    return $ Acid st
+acidInit initial = makeSnaplet "acid-state" description Nothing $
+    initWorker (A.openLocalState initial)
 
 
 ------------------------------------------------------------------------------
@@ -69,9 +68,16 @@ acidInit' :: A.IsAcidic st
           -> st
           -- ^ Initial state to be used if 
           -> SnapletInit b (Acid st)
-acidInit' location initial = makeSnaplet "acid-state" description Nothing $ do
-    st <- liftIO $ A.openLocalStateFrom location initial
-    onUnload (A.closeAcidState st)
+acidInit' location initial = makeSnaplet "acid-state" description Nothing $
+    initWorker (A.openLocalStateFrom location initial)
+
+
+------------------------------------------------------------------------------
+-- | Core init functionality common to both exported variants.
+initWorker :: IO (AcidState st) -> Initializer b v (Acid st)
+initWorker f = do
+    st <- liftIO f
+    onUnload (putStrLn "Closing acid-state" >> A.closeAcidState st)
     return $ Acid st
 
 
