@@ -77,7 +77,7 @@ acidInit' location initial = makeSnaplet "acid-state" description Nothing $
 initWorker :: IO (AcidState st) -> Initializer b v (Acid st)
 initWorker f = do
     st <- liftIO f
-    onUnload (putStrLn "Closing acid-state" >> A.closeAcidState st)
+    onUnload (A.closeAcidState st)
     return $ Acid st
 
 
