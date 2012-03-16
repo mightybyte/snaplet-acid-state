@@ -90,7 +90,7 @@ initWorker f = do
 -- > data App = App { ... _acid :: Snaplet (Acid MyState) ... }
 -- > instance HasAcid App MyState where
 -- >     getAcidStore = getL (snapletValue . acid)
-class HasAcid myState acidState where
+class HasAcid myState acidState | myState -> acidState where
     getAcidStore :: myState -> (Acid acidState)
 
 
@@ -136,6 +136,11 @@ query event = do
 ------------------------------------------------------------------------------
 -- | Wrapper for acid-state's createCheckpoint function that works for
 -- arbitrary instances of HasAcid.
+createCheckpoint :: (MonadIO (m b v),
+                     MonadSnaplet m,
+                     MonadState s (m b b),
+                     HasAcid s st)
+                 => m b v ()
 createCheckpoint = do
     st <- getAcidState
     liftIO $ A.createCheckpoint st
@@ -146,6 +151,11 @@ createCheckpoint = do
 -- arbitrary instances of HasAcid.  The state is automatically closed by the
 -- snaplet's unload action, but this is here in case the user needs more
 -- control.
+closeAcidState :: (MonadIO (m b v),
+                   MonadSnaplet m,
+                   MonadState s (m b b),
+                   HasAcid s st)
+               => m b v ()
 closeAcidState = do
     st <- getAcidState
     liftIO $ A.closeAcidState st
