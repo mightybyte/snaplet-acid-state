@@ -50,7 +50,7 @@ newtype Acid st = Acid
 
 
 ------------------------------------------------------------------------------
--- | Initializer that stores the state in the "state/[typeOf state]/"
+-- | Initializer that stores the state in the \"state\/[typeOf state]\/\"
 -- directory.
 acidInit :: (A.IsAcidic st, Typeable st)
          => st
