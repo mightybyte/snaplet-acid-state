@@ -18,13 +18,13 @@ import           Data.SafeCopy (base, deriveSafeCopy)
 import qualified Data.Text as T
 import           Data.Typeable (Typeable)
 import           Snap.Util.FileServe (serveDirectory)
-import Snap (SnapletInit, Snaplet, Handler, 
-       addRoutes, nestSnaplet, serveSnaplet,
-       defaultConfig, makeSnaplet, 
-       snapletValue, writeText, 
-       makeLens, getL, modL, modify)
-import Snap.Snaplet.AcidState (Update, Query, Acid, HasAcid (getAcidStore), 
-       makeAcidic, update, query, acidInit)
+import           Snap (SnapletInit, Snaplet, Handler, 
+                 addRoutes, nestSnaplet, serveSnaplet,
+                 defaultConfig, makeSnaplet, 
+                 snapletValue, writeText, 
+                 makeLens, getL, modL, modify)
+import           Snap.Snaplet.AcidState (Update, Query, Acid,
+                 HasAcid (getAcidStore), makeAcidic, update, query, acidInit)
 
 
 ------------------------------------------------------------------------------
