@@ -6,25 +6,26 @@
 {-# LANGUAGE OverloadedStrings          #-}
 
 module Main where
+------------------------------------------------------------------------------
+-- explicit imports
+------------------------------------------------------------------------------
 
 import           Prelude hiding ((.), id)
-import           Control.Category
-import           Control.Monad.Reader
-import           Control.Monad.State
+import           Control.Category ((.))
+import           Control.Monad.Reader (asks)
 import           Data.ByteString (ByteString)
-import           Data.Lens.Template
-import           Data.SafeCopy
+import           Data.SafeCopy (base, deriveSafeCopy)
 import qualified Data.Text as T
-import           Data.Typeable
-import           Snap.Core
-import           Snap.Snaplet
-import           Snap.Snaplet.AcidState
-import           Snap.Snaplet.Heist
-import           Snap.Util.FileServe
+import           Data.Typeable (Typeable)
+import           Snap.Util.FileServe (serveDirectory)
+import Snap (SnapletInit, Snaplet, Handler, 
+       addRoutes, nestSnaplet, serveSnaplet,
+       defaultConfig, makeSnaplet, 
+       snapletValue, writeText, 
+       makeLens, getL, modL, modify)
+import Snap.Snaplet.AcidState (Update, Query, Acid, HasAcid (getAcidStore), 
+       makeAcidic, update, query, acidInit)
 
-import Snap
-import Snap.Snaplet.AcidState
-import Snap.Snaplet.Heist
 
 ------------------------------------------------------------------------------
 -- acid-state code
