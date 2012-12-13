@@ -22,8 +22,6 @@ module Snap.Snaplet.AcidState
   ) where
 
 
-import           Prelude hiding ((.), id)
-import           Control.Category
 import qualified Data.Acid as A
 import qualified Data.Acid.Advanced as A
 import           Data.Acid hiding (update
