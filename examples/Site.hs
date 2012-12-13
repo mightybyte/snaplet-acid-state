@@ -10,10 +10,9 @@ module Main where
 -- explicit imports
 ------------------------------------------------------------------------------
 
-import           Prelude hiding ((.), id)
-import           Control.Category ((.))
 import           Control.Monad.Reader (asks)
 import           Data.ByteString (ByteString)
+import           Control.Lens (makeLenses, view, over)
 import           Data.SafeCopy (base, deriveSafeCopy)
 import qualified Data.Text as T
 import           Data.Typeable (Typeable)
@@ -21,8 +20,7 @@ import           Snap.Util.FileServe (serveDirectory)
 import           Snap (SnapletInit, Snaplet, Handler, 
                  addRoutes, nestSnaplet, serveSnaplet,
                  defaultConfig, makeSnaplet, 
-                 snapletValue, writeText, 
-                 makeLens, getL, modL, modify)
+                 snapletValue, writeText, modify)
 import           Snap.Snaplet.AcidState (Update, Query, Acid,
                  HasAcid (getAcidStore), makeAcidic, update, query, acidInit)
 
@@ -35,12 +33,12 @@ data PersistentState = PersistentState
     { _psCounter :: Int
     } deriving (Show,Ord,Eq,Typeable)
 
-makeLens ''PersistentState
+makeLenses ''PersistentState
 
 deriveSafeCopy 0 'base ''PersistentState
 
 incCounter :: Update PersistentState ()
-incCounter = modify (modL psCounter (+1))
+incCounter = modify (over psCounter (+1))
     
 myQuery :: Query PersistentState Int
 myQuery = asks _psCounter
@@ -58,14 +56,14 @@ data App = App
 
 type AppHandler = Handler App App
 
-makeLens ''App
+makeLenses ''App
 
 
 ------------------------------------------------------------------------------
 -- | This instance is optional.  It just allows you to avoid putting the call
 -- "with acid" in front of your calls to query and update.
 instance HasAcid App PersistentState where
-    getAcidStore = getL (snapletValue . acid)
+    getAcidStore  = view (acid.snapletValue)
 
 
 ------------------------------------------------------------------------------
