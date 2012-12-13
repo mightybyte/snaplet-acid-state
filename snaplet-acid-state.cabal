@@ -1,5 +1,5 @@
 name:           snaplet-acid-state
-version:        0.2.2
+version:        0.2.3
 synopsis:       acid-state snaplet for Snap Framework
 description:    This snaplet makes it easy to use acid-state in a Snap
                 application.
@@ -27,7 +27,7 @@ Library
   build-depends:
     acid-state                >= 0.6     && < 0.9,
     base                      >= 4       && < 5,
-    snap                      >= 0.6     && < 0.10,
+    snap                      >= 0.6     && < 0.11,
     text                      >= 0.11    && < 0.12
 
   ghc-options: -Wall -fwarn-tabs -funbox-strict-fields
