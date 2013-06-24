@@ -1,5 +1,5 @@
 name:           snaplet-acid-state
-version:        0.2.3.1
+version:        0.2.3.2
 synopsis:       acid-state snaplet for Snap Framework
 description:    This snaplet makes it easy to use acid-state in a Snap
                 application.
