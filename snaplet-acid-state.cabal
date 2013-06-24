@@ -25,9 +25,9 @@ Library
     Snap.Snaplet.AcidState
 
   build-depends:
-    acid-state                >= 0.6     && < 0.9,
+    acid-state                >= 0.6     && < 0.11,
     base                      >= 4       && < 5,
-    snap                      >= 0.6     && < 0.12,
+    snap                      >= 0.6     && < 0.13,
     text                      >= 0.11    && < 0.12
 
   ghc-options: -Wall -fwarn-tabs -funbox-strict-fields
