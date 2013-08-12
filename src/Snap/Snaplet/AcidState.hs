@@ -71,6 +71,18 @@ acidInit' location initial = makeSnaplet "acid-state" description Nothing $
 
 
 ------------------------------------------------------------------------------
+-- | Initializer allowing you to specify the AcidState to use.  This AcidState
+-- must be initialized manually elsewhere.  It will not be automatically
+-- closed by the snaplet.
+acidInitManual :: A.IsAcidic st
+               => AcidState st
+               -- ^ AcidState state to be used
+               -> SnapletInit b (Acid st)
+acidInitManual initial = makeSnaplet "acid-state" description Nothing $
+    return $ Acid initial
+
+
+------------------------------------------------------------------------------
 -- | Core init functionality common to both exported variants.
 initWorker :: IO (AcidState st) -> Initializer b v (Acid st)
 initWorker f = do
