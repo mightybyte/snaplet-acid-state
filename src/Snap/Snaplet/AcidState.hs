@@ -12,6 +12,7 @@ module Snap.Snaplet.AcidState
   , HasAcid(..)
   , acidInit
   , acidInit'
+  , acidInitMemory
   , getAcidState
   , update
   , query
@@ -24,6 +25,7 @@ module Snap.Snaplet.AcidState
 
 import qualified Data.Acid as A
 import qualified Data.Acid.Advanced as A
+import qualified Data.Acid.Memory as AM
 import           Data.Acid hiding (update
                                   ,query
                                   ,createCheckpoint
@@ -68,6 +70,15 @@ acidInit' :: A.IsAcidic st
           -> SnapletInit b (Acid st)
 acidInit' location initial = makeSnaplet "acid-state" description Nothing $
     initWorker (A.openLocalStateFrom location initial)
+
+------------------------------------------------------------------------------
+-- | Initializer allowing you to open an in-memory store (typically for testing)
+acidInitMemory :: A.IsAcidic st
+               => st
+               -- ^ Initial state to be used if 
+               -> SnapletInit b (Acid st)
+acidInitMemory initial = makeSnaplet "acid-state" description Nothing $
+    initWorker (AM.openMemoryState initial)
 
 
 ------------------------------------------------------------------------------
