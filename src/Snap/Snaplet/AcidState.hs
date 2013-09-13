@@ -13,6 +13,7 @@ module Snap.Snaplet.AcidState
   , acidInit
   , acidInit'
   , acidInitMemory
+  , acidInitManual
   , getAcidState
   , update
   , query
