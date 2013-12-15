@@ -8,7 +8,7 @@
 {-# LANGUAGE RankNTypes                #-}
 {-# LANGUAGE ScopedTypeVariables       #-}
 module Snap.Snaplet.AcidState
-  ( Acid
+  ( Acid(..)
   , HasAcid(..)
   , acidInit
   , acidInit'
@@ -19,6 +19,7 @@ module Snap.Snaplet.AcidState
   , query
   , createCheckpoint
   , closeAcidState
+  , initWorker
 
   , module Data.Acid
   ) where
