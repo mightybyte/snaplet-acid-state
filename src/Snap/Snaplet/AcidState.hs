@@ -24,7 +24,8 @@ module Snap.Snaplet.AcidState
   , module Data.Acid
   ) where
 
-
+import           Control.Monad.IO.Class
+import           Control.Monad.State.Class
 import qualified Data.Acid as A
 import qualified Data.Acid.Advanced as A
 import qualified Data.Acid.Memory as AM
