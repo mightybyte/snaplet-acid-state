@@ -18,6 +18,7 @@ module Snap.Snaplet.AcidState
   , update
   , query
   , createCheckpoint
+  , createArchive
   , closeAcidState
   , initWorker
 
@@ -32,6 +33,7 @@ import qualified Data.Acid.Memory as AM
 import           Data.Acid hiding (update
                                   ,query
                                   ,createCheckpoint
+                                  ,createArchive
                                   ,closeAcidState
                                   )
 import           Data.Typeable
@@ -168,6 +170,19 @@ createCheckpoint :: (MonadIO (m b v),
 createCheckpoint = do
     st <- getAcidState
     liftIO $ A.createCheckpoint st
+
+
+------------------------------------------------------------------------------
+-- | Wrapper for acid-state's createArchive function that works for
+-- arbitrary instances of HasAcid.
+createArchive :: (MonadIO (m b v),
+                  MonadSnaplet m,
+                  MonadState s (m b b),
+                  HasAcid s st)
+              => m b v ()
+createArchive = do
+    st <- getAcidState
+    liftIO $ A.createArchive st
 
 
 ------------------------------------------------------------------------------
