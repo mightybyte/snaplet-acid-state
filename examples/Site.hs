@@ -11,6 +11,7 @@ module Main where
 ------------------------------------------------------------------------------
 
 import           Control.Monad.Reader (asks)
+import           Control.Monad.State (modify)
 import           Data.ByteString (ByteString)
 import           Control.Lens (makeLenses, view, over)
 import           Data.SafeCopy (base, deriveSafeCopy)
@@ -20,7 +21,7 @@ import           Snap.Util.FileServe (serveDirectory)
 import           Snap (SnapletInit, Snaplet, Handler, 
                  addRoutes, nestSnaplet, serveSnaplet,
                  defaultConfig, makeSnaplet, 
-                 snapletValue, writeText, modify)
+                 snapletValue, writeText)
 import           Snap.Snaplet.AcidState (Update, Query, Acid,
                  HasAcid (getAcidStore), makeAcidic, update, query, acidInit)
 
